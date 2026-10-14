@@ -1,0 +1,29 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "umami-storage-maintenance",
+  "main": "maintenance-worker.ts",
+  "compatibility_date": "2026-10-14",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": false,
+  "hyperdrive": [
+    {
+      "binding": "HYPERDRIVE",
+      "id": "50b8de866954421eb4a4cea0e7af5b2c"
+    }
+  ],
+  "send_email": [
+    {
+      "name": "EMAIL",
+      "allowed_destination_addresses": ["aaronmorrisprice@gmail.com"],
+      "allowed_sender_addresses": ["umami-alerts@airpiehi.com"]
+    }
+  ],
+  "vars": {
+    "ALERT_TO": "aaronmorrisprice@gmail.com",
+    "ALERT_FROM": "umami-alerts@airpiehi.com",
+    "DATABASE_SIZE_LIMIT_BYTES": "524288000"
+  },
+  "triggers": {
+    "crons": ["0 * * * *"]
+  }
+}

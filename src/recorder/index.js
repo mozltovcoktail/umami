@@ -488,7 +488,12 @@ import { addCustomEvent, record } from 'rrweb';
         headMetaAuthorship: true,
         headMetaVerification: true,
       },
-      recordCanvas: false,
+      // MFK's game scene is rendered into WebGL. Opted-in replays need canvas
+      // snapshots to show the actual playthrough; sample once per second and
+      // use WebP to keep the 30-day replay store within a manageable size.
+      recordCanvas: true,
+      sampling: { canvas: 1 },
+      dataURLOptions: { type: 'image/webp', quality: 0.45 },
       recordCrossOriginIframes: false,
       checkoutEveryNms: 30000,
       ...(blockSelector && { blockSelector }),

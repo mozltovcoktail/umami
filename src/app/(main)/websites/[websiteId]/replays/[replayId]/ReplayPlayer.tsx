@@ -122,6 +122,9 @@ export function ReplayPlayer({ events }: { events: any[] }) {
               speedOption: [1, 2, 4, 8],
               useVirtualDom: false,
               showWarning: false,
+              // The game uses WebGL canvas snapshots. rrweb requires this
+              // option to rebuild canvas events in its isolated replay frame.
+              UNSAFE_replayCanvas: true,
             },
           });
 

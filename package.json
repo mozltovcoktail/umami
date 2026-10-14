@@ -67,8 +67,9 @@
     "lint": "biome lint .",
     "format": "biome format --write .",
     "check": "biome check --write",
-    "build:cloudflare": "opennextjs-cloudflare build && node scripts/patch-open-next-worker.js",
-    "build:cloudflare:app": "prisma generate && node scripts/build-prisma-client.js && node scripts/patch-prisma-worker-wasm.js && next build --webpack"
+    "build:cloudflare": "pnpm run build:recorder && opennextjs-cloudflare build && node scripts/patch-open-next-worker.js",
+    "build:cloudflare:app": "prisma generate && node scripts/build-prisma-client.js && node scripts/patch-prisma-worker-wasm.js && next build --webpack",
+    "build:cloudflare:maintenance": "wrangler deploy --config wrangler.maintenance.jsonc --dry-run"
   },
   "cacheDirectories": [
     ".next/cache"
