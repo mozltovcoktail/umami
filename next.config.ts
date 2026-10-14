@@ -230,6 +230,16 @@ export default withNextIntl({
   experimental: {
     useTypeScriptCli: true,
   },
+  outputFileTracingIncludes: {
+    '/*': ['./node_modules/pg-cloudflare/dist/index.js'],
+  },
+  webpack(config, { isServer }) {
+    if (isServer) {
+      config.experiments = { ...config.experiments, asyncWebAssembly: true };
+      config.resolve.alias['pg-cloudflare'] = `${process.cwd()}/scripts/cloudflare-pg-shim.js`;
+    }
+    return config;
+  },
   async headers() {
     return headers;
   },

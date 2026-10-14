@@ -1,5 +1,6 @@
 import { PrismaPg } from '@prisma/adapter-pg';
 import { readReplicas } from '@prisma/extension-read-replicas';
+import { getCloudflareContext } from '@opennextjs/cloudflare';
 import debug from 'debug';
 import { PrismaClient } from '@/generated/prisma/client';
 import { DATA_TYPE, DEFAULT_PAGE_SIZE, FILTER_COLUMNS, OPERATORS, SESSION_COLUMNS } from './constants';
@@ -867,7 +868,25 @@ function getClient() {
 
   const schema = getSchema();
 
-  const baseAdapter = new PrismaPg({ connectionString: url }, { schema });
+  let connectionString = url;
+  let cloudflareWorker = false;
+
+  try {
+    const env = getCloudflareContext().env as unknown as {
+      HYPERDRIVE?: { connectionString: string };
+    };
+    connectionString = env.HYPERDRIVE?.connectionString || url;
+    cloudflareWorker = Boolean(env.HYPERDRIVE);
+  } catch {
+    // Use DATABASE_URL outside a Cloudflare request context (for example, in Node.js).
+  }
+
+  const baseAdapter = new PrismaPg(
+    // Workers cannot safely reuse an outbound socket in a later invocation;
+    // Hyperdrive keeps the database-side pool warm between these one-use clients.
+    { connectionString, ...(cloudflareWorker ? { maxUses: 1 } : {}) },
+    { schema },
+  );
 
   const baseClient = new PrismaClient({
     adapter: baseAdapter,
