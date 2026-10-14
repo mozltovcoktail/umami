@@ -10,6 +10,7 @@ allowBuilds:
   msw: false
   prisma: true
   sharp: false
+  workerd: true
 minimumReleaseAgeExclude:
   - '@umami/react-zen'
   - cn@0.2.6
