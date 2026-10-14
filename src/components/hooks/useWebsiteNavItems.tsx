@@ -49,6 +49,12 @@ export function useWebsiteNavItems(websiteId: string) {
           path: renderPath('/events'),
         },
         {
+          id: 'game-analytics',
+          label: 'Game analytics',
+          icon: <ChartPie />,
+          path: renderPath('/game-analytics'),
+        },
+        {
           id: 'sessions',
           label: t(labels.sessions),
           icon: <User />,

@@ -1,6 +1,6 @@
 'use client';
 import { Column, DataColumn, DataTable, Row, Text } from '@umami/react-zen';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { Avatar } from '@/components/common/Avatar';
 import { DateDistance } from '@/components/common/DateDistance';
 import { Empty } from '@/components/common/Empty';
@@ -28,6 +28,7 @@ export function EventDataPivotTable({
   const { t, labels } = useMessages();
   const { router, updateParams } = useNavigation();
   const { isMobile } = useMobile();
+  const [sort, setSort] = useState({ key: 'createdAt', direction: 'desc' as 'asc' | 'desc' });
 
   const propertiesQuery = useEventDataPropertiesQuery(websiteId);
   const pivotQuery = useEventDataPivotQuery(websiteId, eventName, eventFilters);
@@ -70,9 +71,34 @@ export function EventDataPivotTable({
     );
   }, [pivotQuery.data]);
 
+  const sortedTableData = useMemo(() => [...tableData].sort((a, b) => {
+    const left = a[sort.key] ?? '';
+    const right = b[sort.key] ?? '';
+    const leftNumber = Number(left), rightNumber = Number(right);
+    const compared = left !== '' && right !== '' && Number.isFinite(leftNumber) && Number.isFinite(rightNumber)
+      ? leftNumber - rightNumber
+      : String(left).localeCompare(String(right), undefined, { numeric: true, sensitivity: 'base' });
+    return sort.direction === 'asc' ? compared : -compared;
+  }), [tableData, sort]);
+
+  const sortLabel = (key: string, label: string) => (
+    <button
+      type="button"
+      aria-label={`Sort by ${label}`}
+      aria-pressed={sort.key === key}
+      onClick={() => setSort(current => ({
+        key,
+        direction: current.key === key && current.direction === 'asc' ? 'desc' : 'asc',
+      }))}
+      className="inline-flex appearance-none items-center gap-1 border-0 bg-transparent p-0 text-inherit"
+    >
+      {label}{sort.key === key ? (sort.direction === 'asc' ? ' ↑' : ' ↓') : ''}
+    </button>
+  );
+
   const tableQuery = useMemo(
-    () => (pivotQuery.data ? { ...pivotQuery.data, data: tableData } : undefined),
-    [pivotQuery.data, tableData],
+    () => (pivotQuery.data ? { ...pivotQuery.data, data: sortedTableData } : undefined),
+    [pivotQuery.data, sortedTableData],
   );
 
   const showPager = tableQuery && tableQuery.count > tableQuery.pageSize;
@@ -108,15 +134,15 @@ export function EventDataPivotTable({
                   </Link>
                 )}
               </DataColumn>
-              <DataColumn id="urlPath" label={t(labels.path)} width="220px">
+              <DataColumn id="urlPath" label={sortLabel('urlPath', t(labels.path))} width="220px">
                 {(row: any) => renderTruncatedText(row.urlPath ?? '')}
               </DataColumn>
               {propertyKeys.map(key => (
-                <DataColumn key={key} id={key} label={key} width="160px">
+                <DataColumn key={key} id={key} label={sortLabel(key, key)} width="160px">
                   {(row: any) => renderTruncatedText(row[key] ?? '')}
                 </DataColumn>
               ))}
-              <DataColumn id="createdAt" label={t(labels.created)} width="180px">
+              <DataColumn id="createdAt" label={sortLabel('createdAt', t(labels.created))} width="180px">
                 {(row: any) => <DateDistance date={new Date(row.createdAt)} />}
               </DataColumn>
             </DataTable>
@@ -133,15 +159,15 @@ export function EventDataPivotTable({
                       </Link>
                     )}
                   </DataColumn>
-                  <DataColumn id="urlPath" label={t(labels.path)} width="220px">
+                  <DataColumn id="urlPath" label={sortLabel('urlPath', t(labels.path))} width="220px">
                     {(row: any) => renderTruncatedText(row.urlPath ?? '')}
                   </DataColumn>
                   {propertyKeys.map(key => (
-                    <DataColumn key={key} id={key} label={key} width="160px">
+                    <DataColumn key={key} id={key} label={sortLabel(key, key)} width="160px">
                       {(row: any) => renderTruncatedText(row[key] ?? '')}
                     </DataColumn>
                   ))}
-                  <DataColumn id="createdAt" label={t(labels.created)} width="180px">
+                  <DataColumn id="createdAt" label={sortLabel('createdAt', t(labels.created))} width="180px">
                     {(row: any) => <DateDistance date={new Date(row.createdAt)} />}
                   </DataColumn>
                 </DataTable>

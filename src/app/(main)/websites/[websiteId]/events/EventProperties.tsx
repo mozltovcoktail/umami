@@ -21,8 +21,18 @@ const selectValueStyle = {
   whiteSpace: 'nowrap' as const,
 };
 
-export function EventProperties({ websiteId }: { websiteId: string }) {
-  const [eventName, setEventName] = useState('');
+const GAME_EVENT_PREFIXES = ['run_', 'battle_', 'route_', 'fate_', 'item_', 'camp_', 'merchant_'];
+
+export function EventProperties({
+  websiteId,
+  gameOnly = false,
+  eventPrefixes,
+}: {
+  websiteId: string;
+  gameOnly?: boolean;
+  eventPrefixes?: string[];
+}) {
+  const [eventName, setEventName] = useState(gameOnly ? 'run_ended' : '');
   const [eventSearch, setEventSearch] = useState('');
   const [propertyName, setPropertyName] = useState('');
   const [propertyFilters, setPropertyFilters] = useState<PropertyFilter[]>([]);
@@ -37,8 +47,16 @@ export function EventProperties({ websiteId }: { websiteId: string }) {
 
   const eventNames = useMemo<string[]>(() => {
     if (!data) return [];
-    return [...new Set<string>(data.map((e: { eventName: string }) => e.eventName))];
-  }, [data]);
+    return [...new Set<string>(data.map((e: { eventName: string }) => e.eventName))]
+      .filter(name => eventPrefixes
+        ? eventPrefixes.some(prefix => name.startsWith(prefix))
+        : !gameOnly || GAME_EVENT_PREFIXES.some(prefix => name.startsWith(prefix)));
+  }, [data, eventPrefixes, gameOnly]);
+
+  useEffect(() => {
+    if (eventNames.length && !eventNames.includes(eventName)) setEventName(eventNames[0]);
+    else if (!eventNames.length && eventName) setEventName('');
+  }, [eventNames, eventName]);
 
   const properties = useMemo(() => {
     if (!data || !eventName) return [];
