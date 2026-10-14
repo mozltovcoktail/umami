@@ -19,6 +19,12 @@
   "vars": {
     "MCP_ENABLED": "1"
   },
+  "routes": [
+    {
+      "pattern": "umami.airpiehi.com",
+      "custom_domain": true
+    }
+  ],
   "workers_dev": true,
   "preview_urls": false
 }
