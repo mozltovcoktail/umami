@@ -10,6 +10,7 @@ const GAME_DASHBOARDS = [
   { id: 'combat', label: 'Combat', prefixes: ['battle_'] },
   { id: 'choices', label: 'Choices', prefixes: ['route_', 'fate_', 'camp_'] },
   { id: 'inventory', label: 'Inventory and trade', prefixes: ['item_', 'merchant_'] },
+  { id: 'discovered', label: 'New gameplay', prefixes: ['gameplay_'] },
 ];
 
 export function GameAnalyticsPage({ websiteId }: { websiteId: string }) {
