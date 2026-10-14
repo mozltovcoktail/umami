@@ -39,7 +39,7 @@ export function EventProperties({
   const { t, labels } = useMessages();
 
   useEffect(() => {
-    setPropertyName('');
+    setPropertyName(eventName.startsWith('gameplay_') ? 'gameplay_meaning' : '');
     setPropertyFilters([]);
   }, [eventName]);
 
@@ -91,7 +91,7 @@ export function EventProperties({
 
   const handleEventChange = (value: string) => {
     setEventName(value);
-    setPropertyName('');
+    setPropertyName(value.startsWith('gameplay_') ? 'gameplay_meaning' : '');
     setPropertyFilters([]);
   };
 
