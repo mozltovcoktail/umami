@@ -21,6 +21,10 @@ This fork can run Umami on Cloudflare Workers with its analytics database in Sup
    DATABASE_URL='your-supabase-postgres-url' pnpm db:migrate
    ```
 
+## Connect coding agents
+
+The self-hosted read-only MCP endpoint is enabled at `/mcp`. In Umami, create an API key under **Settings → API keys**, then configure Codex or Claude Code to connect to `https://<your-worker>.workers.dev/mcp` with `Authorization: Bearer umami_<api-key>`. The key only grants the access of its owner; revoke it in Umami to disconnect an agent.
+
 ## Build and deploy
 
 Install the repo's pinned dependencies, then build and deploy:

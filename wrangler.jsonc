@@ -16,6 +16,9 @@
       "id": "50b8de866954421eb4a4cea0e7af5b2c"
     }
   ],
+  "vars": {
+    "MCP_ENABLED": "1"
+  },
   "workers_dev": true,
   "preview_urls": false
 }
